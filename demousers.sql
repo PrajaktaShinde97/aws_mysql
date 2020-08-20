@@ -1,1 +1,0 @@
-create table if not exists demousers(id INT NOT NULL AUTO_INCREMENT, name VARCHAR(50) NOT NULL, mobile VARCHAR(20) NOT NULL, password VARCHAR(30) NOT NULL, introduction VARCHAR(100) NOT NULL, email VARCHAR(40) NOT NULL, PRIMARY KEY (id));

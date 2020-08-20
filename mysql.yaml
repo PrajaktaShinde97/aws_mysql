@@ -5,8 +5,8 @@
   become_method: sudo
   gather_facts: true
   vars:
-    mysql_root_password: 'root'
-    mysql_demo_password: 'demo'
+    mysql_root_password: 'rootpwd'
+    mysql_pocuser_password: 'Password@1'
   tasks:
     - name: Update the software package repository
       apt:
@@ -85,43 +85,43 @@
         name: mysql
         state: restarted
 
-    - name: Create a user with name demo
+    - name: Create a user with name pocuser
       mysql_user:
         login_user: root
         login_password: "{{ mysql_root_password }}"
-        name: demo
+        name: pocuser
         host: localhost
-        password: "{{ mysql_demo_password }}"
+        password: "{{ mysql_pocuser_password }}"
         priv: '*.*:ALL'
         state: present
 
-    - name: create a user with name demo with mydb-server host
+    - name: create a user with name pocuser with mydb-server host
       mysql_user:
         login_user: root
         login_password: "{{ mysql_root_password }}"
-        name: demo
+        name: pocuser
         host: mydb-server
-        password: "{{ mysql_demo_password }}"
+        password: "{{ mysql_pocuser_password }}"
         priv: '*.*:ALL'
         state: present
 
     - name: Create a new database
       mysql_db:
-        login_user: demo
-        login_password: "{{ mysql_demo_password }}"
-        name: mydatabase
+        login_user: poc
+        login_password: "{{ mysql_pocuser_password }}"
+        name: pocdb
         state: present
 
-    - name: Copy the SQL file to create demousers table
+    - name: Copy the SQL file to create pocusers table
       copy:
-        src: ./demousers.sql
-        dest: /tmp/demousers.sql
+        src: ./pocusers.sql
+        dest: /tmp/pocusers.sql
 
-    - name: Create the demousers table
+    - name: Create the pocusers table
       mysql_db:
-        login_user: demo
-        login_password: "{{ mysql_demo_password }}"
-        name: mydatabase
+        login_user: poc
+        login_password: "{{ mysql_pocuser_password }}"
+        name: pocdb
         state: import
-        target: /tmp/demousers.sql
+        target: /tmp/pocusers.sql
 ...
