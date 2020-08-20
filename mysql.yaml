@@ -1,6 +1,6 @@
 ---
 - name: Install MySQL database server
-  hosts: mysqldb
+  hosts: mydb-server
   become: yes
   become_method: sudo
   gather_facts: true
@@ -33,30 +33,23 @@
         login_user: root
         login_password: "{{ mysql_root_password }}"
         name: root
-        host: mysqldb
+        host: mydb-server
         password: "{{ mysql_root_password }}"
-        #        with_items:
-        #          - 127.0.0.1
-        #          - ::1
-        #          - localhost
   
     - name: Delete anonymous MySQL user
       mysql_user:
         login_user: root
         login_password: "{{ mysql_root_password }}"
         name: ""
-        host: mysqldb
+        host: mydb-server
         state: absent
-        #        with_items:
-        #  - localhost
-        #  - mysqldb
 
     - name: Delete Hostname based MySQL user
       mysql_user:
         login_user: root
         login_password: "{{ mysql_root_password }}"
         name: ""
-        host: mysqldb
+        host: mydb-server
         state: absent
 
     - name: Remove MySQL test database
@@ -102,12 +95,12 @@
         priv: '*.*:ALL'
         state: present
 
-    - name: create a user with name demo with mysqldb host
+    - name: create a user with name demo with mydb-server host
       mysql_user:
         login_user: root
         login_password: "{{ mysql_root_password }}"
         name: demo
-        host: mysqldb
+        host: mydb-server
         password: "{{ mysql_demo_password }}"
         priv: '*.*:ALL'
         state: present
@@ -118,6 +111,12 @@
         login_password: "{{ mysql_demo_password }}"
         name: mydatabase
         state: present
+
+    - name: Copy the SQL file to create demousers table
+      copy:
+        src: ./demousers.sql
+        dest: /tmp/demousers.sql
+
     - name: Create the demousers table
       mysql_db:
         login_user: demo
