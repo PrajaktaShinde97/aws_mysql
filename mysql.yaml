@@ -33,23 +33,30 @@
         login_user: root
         login_password: "{{ mysql_root_password }}"
         name: root
-        host: mydb-server
+        host: "{{ hostvars['mydb-server'].ansible_host }}"
         password: "{{ mysql_root_password }}"
+      with_items:
+        - 127.0.0.1
+        - ::1
+        - localhost
   
     - name: Delete anonymous MySQL user
       mysql_user:
         login_user: root
         login_password: "{{ mysql_root_password }}"
         name: ""
-        host: mydb-server
+        host: "{{ hostvars['mydb-server'].ansible_host }}"
         state: absent
+      with_items:
+        - localhost
+        - "{{ hostvars['mydb-server'].ansible_host }}"
 
     - name: Delete Hostname based MySQL user
       mysql_user:
         login_user: root
         login_password: "{{ mysql_root_password }}"
         name: ""
-        host: mydb-server
+        host: "{{ hostvars['mydb-server'].ansible_host }}"
         state: absent
 
     - name: Remove MySQL test database
@@ -100,14 +107,14 @@
         login_user: root
         login_password: "{{ mysql_root_password }}"
         name: pocuser
-        host: mydb-server
+        host: "{{ hostvars['myweb-server'].ansible_host }}"
         password: "{{ mysql_pocuser_password }}"
         priv: '*.*:ALL'
         state: present
 
     - name: Create a new database
       mysql_db:
-        login_user: poc
+        login_user: pocuser
         login_password: "{{ mysql_pocuser_password }}"
         name: pocdb
         state: present
@@ -119,7 +126,7 @@
 
     - name: Create the pocusers table
       mysql_db:
-        login_user: poc
+        login_user: pocuser
         login_password: "{{ mysql_pocuser_password }}"
         name: pocdb
         state: import
